@@ -37,3 +37,10 @@ La empresa desea consultar luego las ventas por sucursal, totalizar ingresos, fi
 
 ### Ejercicio tomado de : [TodoCode](https://www.youtube.com/watch?v=l-Bl45I6UEY)
 
+---
+
+## Solución
+
+### Diagrama de clases
+
+![Diagrama de clases](./doc/images/DClase-GestionVentasSupermercado.jpg)
