@@ -45,6 +45,11 @@ tasks.named('test') {
     useJUnitPlatform()
     jvmArgs "-javaagent:${configurations.mockitoAgent.asPath}" // Usa asPath para obtener la ruta absoluta del JAR
     finalizedBy jacocoTestReport
+    testLogging {
+        events = ["PASSED", "FAILED", "SKIPPED"]
+        showStandardStreams = true
+        exceptionFormat = "full"
+    }
 }
 
 spotless {
