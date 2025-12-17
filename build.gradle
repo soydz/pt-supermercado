@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.5.8'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.diffplug.spotless' version "8.1.0"
+    id 'jacoco'
 }
 
 group = 'com.soydz'
@@ -15,8 +16,16 @@ java {
     }
 }
 
+jacoco {
+    toolVersion = '0.8.12'
+}
+
 repositories {
     mavenCentral()
+}
+
+configurations {
+    mockitoAgent
 }
 
 dependencies {
@@ -27,10 +36,15 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.mockito:mockito-core'
+    // Añade mockito-core como agente (sin dependencias transitivas)
+    mockitoAgent('org.mockito:mockito-core') { transitive = false }
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs "-javaagent:${configurations.mockitoAgent.asPath}" // Usa asPath para obtener la ruta absoluta del JAR
+    finalizedBy jacocoTestReport
 }
 
 spotless {
@@ -41,5 +55,25 @@ spotless {
         formatAnnotations()
         trimTrailingWhitespace()
         endWithNewline()
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    classDirectories.setFrom(
+            files(classDirectories.files.collect {
+                fileTree(dir: it, excludes: [
+                        '**/entity/**',
+                        '**/dto/**',
+                        '**/service/exception/**',
+                        '**/*Application*'
+                ])
+            })
+    )
+
+    reports {
+        html.required = true
+        xml.required = true
     }
 }
