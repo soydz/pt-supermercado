@@ -1,3 +1,10 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=soydz_pt-supermercado&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=soydz_pt-supermercado)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=soydz_pt-supermercado&metric=coverage)](https://sonarcloud.io/summary/new_code?id=soydz_pt-supermercado)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=soydz_pt-supermercado&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=soydz_pt-supermercado)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=soydz_pt-supermercado&metric=bugs)](https://sonarcloud.io/summary/new_code?id=soydz_pt-supermercado)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=soydz_pt-supermercado&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=soydz_pt-supermercado)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=soydz_pt-supermercado&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=soydz_pt-supermercado)
+
 ## API REST - Gestión de ventas de una cadena de supermercados
 
 ### 🚀 🛠️ Tecnologías utilizadas
