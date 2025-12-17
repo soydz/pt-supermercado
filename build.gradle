@@ -20,6 +20,10 @@ jacoco {
     toolVersion = '0.8.12'
 }
 
+ext {
+    set('testcontainers.version', "2.0.2")
+}
+
 repositories {
     mavenCentral()
 }
@@ -39,6 +43,9 @@ dependencies {
     testImplementation 'org.mockito:mockito-core'
     // Añade mockito-core como agente (sin dependencias transitivas)
     mockitoAgent('org.mockito:mockito-core') { transitive = false }
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'io.rest-assured:rest-assured'
 }
 
 tasks.named('test') {
