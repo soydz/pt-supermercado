@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.diffplug.spotless' version "8.1.0"
     id 'jacoco'
+    id "org.sonarqube" version "7.2.2.6593"
 }
 
 group = 'com.soydz'
@@ -83,5 +84,12 @@ jacocoTestReport {
     reports {
         html.required = true
         xml.required = true
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "soydz_pt-supermercado"
+        property "sonar.organization", "soydz"
     }
 }
