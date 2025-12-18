@@ -1,12 +1,12 @@
 package com.soydz.ptsupermercado.service.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.soydz.ptsupermercado.entity.Supplier;
 import com.soydz.ptsupermercado.repository.ISupplierRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class SupplierServiceImplTest {
+class SupplierServiceImplTest {
 
   private Supplier supplier;
 
@@ -45,5 +45,14 @@ public class SupplierServiceImplTest {
         "clientes@lacteoscolina.com",
         result.getEmail(),
         "The supplier email does not match the expected value");
+  }
+
+  @Test
+  void shouldThrowEntityNotFoundExceptionWhenFindByIdFails() {
+    // When
+    when(supplierRepository.findById(any())).thenReturn(Optional.empty());
+
+    // Then
+    assertThrows(EntityNotFoundException.class, () -> supplierService.findById(5L));
   }
 }
