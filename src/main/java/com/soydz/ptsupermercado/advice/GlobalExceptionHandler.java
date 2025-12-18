@@ -2,9 +2,11 @@ package com.soydz.ptsupermercado.advice;
 
 import com.soydz.ptsupermercado.dto.ApiErrorResDTO;
 import com.soydz.ptsupermercado.dto.ErrorDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,5 +26,13 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.badRequest()
         .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), "Validation failed", errors));
+  }
+
+  @ExceptionHandler(value = EntityNotFoundException.class)
+  public ResponseEntity<ApiErrorResDTO> handleEntityNotFound(
+      EntityNotFoundException ex, HttpServletRequest req) {
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), ex.getMessage(), List.of()));
   }
 }
