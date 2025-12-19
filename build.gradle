@@ -91,5 +91,12 @@ sonar {
     properties {
         property "sonar.projectKey", "soydz_pt-supermercado"
         property "sonar.organization", "soydz"
+        property "sonar.coverage.jacoco.xmlReportPaths",
+                "build/reports/jacoco/test/jacocoTestReport.xml"
+        property "sonar.coverage.exclusions",
+                "**/entity/**," +
+                        "**/dto/**," +
+                        "**/service/exception/**," +
+                        "**/*Application*"
     }
 }
