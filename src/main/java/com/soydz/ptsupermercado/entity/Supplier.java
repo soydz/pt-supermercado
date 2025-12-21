@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 @Table(name = "suppliers")
@@ -16,15 +15,11 @@ public class Supplier {
   @NotNull @NotBlank private String name;
   @NotNull @NotBlank @Email private String email;
 
-  @OneToMany(mappedBy = "supplier")
-  private List<Product> productList;
-
   public Supplier() {}
 
-  public Supplier(String name, String email, List<Product> productList) {
+  public Supplier(String name, String email) {
     this.name = name;
     this.email = email;
-    this.productList = productList;
   }
 
   public Long getId() {
@@ -49,13 +44,5 @@ public class Supplier {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public List<Product> getProductList() {
-    return productList;
-  }
-
-  public void setProductList(List<Product> productList) {
-    this.productList = productList;
   }
 }
