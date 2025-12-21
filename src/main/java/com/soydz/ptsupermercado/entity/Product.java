@@ -17,8 +17,11 @@ public class Product {
   private String category;
   @NotNull @Positive private BigDecimal price;
 
-  @ManyToOne
-  @JoinColumn(name = "supplier_id")
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(
+      name = "supplier_id",
+      nullable = false,
+      foreignKey = @ForeignKey(name = "fk_product_supplier"))
   private Supplier supplier;
 
   public Product() {}
