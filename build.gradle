@@ -47,14 +47,46 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+
     jvmArgs "-javaagent:${configurations.mockitoAgent.asPath}" // Usa asPath para obtener la ruta absoluta del JAR
+
     finalizedBy jacocoTestReport
+
     testLogging {
         events = ["PASSED", "FAILED", "SKIPPED"]
         showStandardStreams = true
         exceptionFormat = "full"
     }
 }
+
+test {
+    filter {
+        includeTestsMatching "*Test"
+    }
+}
+
+tasks.register('integrationTest', Test) {
+    group = 'verification'
+    description = 'Run integration tests'
+
+    //testClassesDirs = sourceSets.intTest.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    shouldRunAfter test
+
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed"
+    }
+}
+
+integrationTest {
+    filter {
+        includeTestsMatching "*IT"
+    }
+}
+
+check.dependsOn integrationTest
 
 spotless {
     java {
