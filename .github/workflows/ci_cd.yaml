@@ -43,6 +43,12 @@ jobs:
       - name: Run unit tests
         run: ./gradlew test --no-daemon
 
+      - name: Run integration tests
+        if: ${{ !cancelled() }}
+        run: ./gradlew  integrationTest --no-daemon
+        env:
+          SPRING_PROFILES_ACTIVE: "test"
+
       - name: Generate coverage report
         run: ./gradlew jacocoTestReport --no-daemon
 
