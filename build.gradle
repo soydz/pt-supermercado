@@ -105,16 +105,13 @@ spotless {
 jacocoTestReport {
     dependsOn test
 
-    classDirectories.setFrom(
-            files(classDirectories.files.collect {
-                fileTree(dir: it, excludes: [
-                        '**/entity/**',
-                        '**/dto/**',
-                        '**/service/exception/**',
-                        '**/*Application*'
-                ])
-            })
-    )
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, excludes: ['**/entity/**',
+                                     '**/dto/**',
+                                     '**/service/exception/**',
+                                     '**/*Application*',
+                                     '**/config/*OpenApi*'])
+    }))
 
     reports {
         html.required = true
@@ -129,9 +126,6 @@ sonar {
         property "sonar.coverage.jacoco.xmlReportPaths",
                 "build/reports/jacoco/test/jacocoTestReport.xml"
         property "sonar.coverage.exclusions",
-                "**/entity/**," +
-                        "**/dto/**," +
-                        "**/service/exception/**," +
-                        "**/*Application*"
+                "**/entity/**," + "**/dto/**," + "**/service/exception/**," + "**/*Application*" + '**/config/*OpenApi*'
     }
 }
