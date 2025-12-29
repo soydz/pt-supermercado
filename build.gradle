@@ -34,6 +34,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.postgresql:postgresql'
+    compileOnly 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14'
+    developmentOnly 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14'
+    developmentOnly 'com.scalar.maven:scalar-webmvc:0.5.8'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation 'org.mockito:mockito-core'
@@ -102,16 +105,13 @@ spotless {
 jacocoTestReport {
     dependsOn test
 
-    classDirectories.setFrom(
-            files(classDirectories.files.collect {
-                fileTree(dir: it, excludes: [
-                        '**/entity/**',
-                        '**/dto/**',
-                        '**/service/exception/**',
-                        '**/*Application*'
-                ])
-            })
-    )
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, excludes: ['**/entity/**',
+                                     '**/dto/**',
+                                     '**/service/exception/**',
+                                     '**/*Application*',
+                                     '**/config/*OpenApi*'])
+    }))
 
     reports {
         html.required = true
@@ -125,10 +125,6 @@ sonar {
         property "sonar.organization", "soydz"
         property "sonar.coverage.jacoco.xmlReportPaths",
                 "build/reports/jacoco/test/jacocoTestReport.xml"
-        property "sonar.coverage.exclusions",
-                "**/entity/**," +
-                        "**/dto/**," +
-                        "**/service/exception/**," +
-                        "**/*Application*"
+        property "sonar.coverage.exclusions", ["**/entity/**", "**/dto/**", "**/service/exception/**", "**/*Application*", '**/config/*OpenApi*'].join(',')
     }
 }
