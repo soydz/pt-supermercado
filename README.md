@@ -44,3 +44,49 @@ La empresa desea consultar luego las ventas por sucursal, totalizar ingresos, fi
 ### Diagrama de clases
 
 ![Diagrama de clases](./doc/images/DClase-GestionVentasSupermercado.jpg)
+
+### Argocd - Despliegue GitOps
+
+GitOps permite gestionar los despliegues de aplicaciones en Kubernetes directamente desde un repositorio Git, lo que
+facilita el control de versiones y la automatización de las implementaciones.
+
+ArgoCD es una herramienta de entrega continua declarativa y GitOps para Kubernetes.
+
+#### Instalación
+
+```bash
+[soydz@dzvps ~]$ kubectl create namespace argocd
+
+[soydz@dzvps ~]$ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+Verificar que los pods están corriendo:
+
+![](./doc/images/argocd_1.png)
+
+Se crea un túnel temporal entre la máquina local y el clúster de Kubernetes,
+redirigiendo el puerto local **8080** hacia el puerto **443** del servicio
+`argocd-server` dentro del namespace `argocd`.
+
+```bash
+[soydz@dzvps ~]$ kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+Se establece una conexión SSH al servidor remoto (`usuario@IP_DEL_VPS`)
+creando un **túnel de red seguro** que redirige el puerto **8080** de la máquina local
+hacia el puerto **8080** del `localhost` del VPS.
+
+```bash
+[soydz@dzvps ~]$ ssh -L 8080:localhost:8080 usuario@IP_DEL_VPS
+```
+
+Gracias a este túnel, es posible acceder a la interfaz web de **ArgoCD**
+desde el navegador en `https://localhost:8080` sin necesidad de exponer
+el servicio a Internet ni abrir puertos en el servidor,
+manteniendo así un acceso seguro.
+
+Comprobamos si funciona:
+
+![](doc/images/argocd_2.png)
+![](doc/images/argocd_3.png)
+
