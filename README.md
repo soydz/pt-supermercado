@@ -111,3 +111,33 @@ Creamos otro secret para la api:
     --from-literal=DB_PASSWORD=supersecreta \
     --from-literal=DB_URL=jdbc:postgresql://postgres.pt-supermercado-database.svc.cluster.local:5432/appdb
 ```
+
+### Arquitectura del despliegue
+
+```text
+K3s Cluster
+ ├─ Namespace: pt-supermercado-database
+ │    └─ Postgres StatefulSet + Service
+ ├─ Namespace: pt-supermercado
+ │    └─ Spring Boot Deployment + Service
+ └─ Argo CD
+      └─ Sincroniza los manifests desde GitHub
+```
+
+### Argo CD - Aplicaciones
+
+![](doc/images/argocd_4.png)
+![](doc/images/argocd_5.png)
+![](doc/images/argocd_6.png)
+
+### Estado en Argo CD
+
+Aplicaciones sincronizadas
+
+![](doc/images/argocd_7.png)
+
+### Página de inicio de la aplicación
+
+La app está desplegada y accesible en la URL: http://pt-supermercado.soydz.com
+
+![](doc/images/argocd_8.png)
