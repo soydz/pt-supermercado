@@ -90,3 +90,24 @@ Comprobamos si funciona:
 ![](doc/images/argocd_2.png)
 ![](doc/images/argocd_3.png)
 
+### Variables de entorno en K8s
+
+Creamos un secret de K8s para la base de datos:
+
+```bash
+[soydz@dzvps ~]$ kubectl create secret generic postgres-secret \
+      -n database \
+      --from-literal=POSTGRES_DB=appdb \
+      --from-literal=POSTGRES_USER=appuser \
+      --from-literal=POSTGRES_PASSWORD=supersecreta
+```
+
+Creamos otro secret para la api:
+
+```bash
+[soydz@dzvps ~]$ kubectl create secret generic api-secret \
+    -n api \
+    --from-literal=DB_USER=appuser \
+    --from-literal=DB_PASSWORD=supersecreta \
+    --from-literal=DB_URL=jdbc:postgresql://postgres.pt-supermercado-database.svc.cluster.local:5432/appdb
+```
