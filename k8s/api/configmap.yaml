@@ -4,4 +4,3 @@ metadata:
   name: api-config
 data:
   SPRING_PROFILES_ACTIVE: prod
-  SPRING_JPA_HIBERNATE_DDL_AUTO: validate
