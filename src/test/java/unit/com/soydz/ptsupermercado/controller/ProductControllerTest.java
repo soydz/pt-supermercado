@@ -2,12 +2,14 @@ package com.soydz.ptsupermercado.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.soydz.ptsupermercado.dto.ProductResDTO;
 import com.soydz.ptsupermercado.service.impl.ProductServiceImpl;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -62,5 +64,27 @@ class ProductControllerTest {
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "http://localhost/api/v1/productos/1"))
         .andExpect(jsonPath("$.name").value("Arroz floral"));
+  }
+
+  @Test
+  void shouldReturn200AndProductListWhenProductsExist() throws Exception {
+    // Given
+    ProductResDTO productResDTO =
+        new ProductResDTO(1L, "Arroz floral", "Granos", BigDecimal.TEN, "Granos del sol");
+
+    // When
+    when(productService.findAll()).thenReturn(List.of(productResDTO));
+
+    // Then
+    mockMvc
+        .perform(get("/api/v1/productos").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$[0].id").value(productResDTO.id()))
+        .andExpect(jsonPath("$[0].name").value(productResDTO.name()))
+        .andExpect(jsonPath("$[0].category").value(productResDTO.category()))
+        .andExpect(jsonPath("$[0].price").value(productResDTO.price()))
+        .andExpect(jsonPath("$[0].supplierName").value(productResDTO.supplierName()));
   }
 }
