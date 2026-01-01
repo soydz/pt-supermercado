@@ -6,6 +6,7 @@ import com.soydz.ptsupermercado.entity.Supplier;
 import com.soydz.ptsupermercado.repository.IProductRepository;
 import com.soydz.ptsupermercado.service.interfaces.IProductService;
 import com.soydz.ptsupermercado.service.interfaces.ISupplierService;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,5 +28,10 @@ public class ProductServiceImpl implements IProductService {
 
     return ProductResDTO.fromEntity(
         productRepository.save(ProductReqDTO.toEntity(productReqDTO, supplier)));
+  }
+
+  @Override
+  public List<ProductResDTO> findAll() {
+    return productRepository.findAll().stream().map(ProductResDTO::fromEntity).toList();
   }
 }

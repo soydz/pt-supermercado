@@ -12,6 +12,7 @@ import com.soydz.ptsupermercado.entity.Supplier;
 import com.soydz.ptsupermercado.repository.IProductRepository;
 import com.soydz.ptsupermercado.service.interfaces.ISupplierService;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,5 +62,22 @@ class ProductServiceImplTest {
         "The supplier name does not match the expected value");
 
     verify(productRepository, times(1)).save(any(Product.class));
+  }
+
+  @Test
+  void shouldReturnProductResDTOListWhenFindAllIsSuccessful() {
+    // when
+    when(productRepository.findAll()).thenReturn(List.of(product));
+
+    List<ProductResDTO> result = productService.findAll();
+
+    // Then
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(product.getId(), result.getFirst().id());
+    assertEquals(product.getCategory(), result.getFirst().category());
+    assertEquals(product.getName(), result.getFirst().name());
+    assertEquals(product.getPrice(), result.getFirst().price());
+    assertEquals(product.getSupplier().getName(), result.getFirst().supplierName());
   }
 }
