@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.soydz.ptsupermercado.entity.Supplier;
 import com.soydz.ptsupermercado.repository.ISupplierRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,11 +48,11 @@ class SupplierServiceImplTest {
   }
 
   @Test
-  void shouldThrowEntityNotFoundExceptionWhenFindByIdFails() {
+  void shouldThrowSupplierNotFoundExceptionWhenFindByIdFails() {
     // When
     when(supplierRepository.findById(any())).thenReturn(Optional.empty());
 
     // Then
-    assertThrows(EntityNotFoundException.class, () -> supplierService.findById(5L));
+    assertThrows(SupplierNotFoundException.class, () -> supplierService.findById(5L));
   }
 }

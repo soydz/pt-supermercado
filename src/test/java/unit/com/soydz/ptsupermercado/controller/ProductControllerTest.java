@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.soydz.ptsupermercado.dto.ProductReqDTO;
 import com.soydz.ptsupermercado.dto.ProductResDTO;
+import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
 import com.soydz.ptsupermercado.service.impl.ProductServiceImpl;
-import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -142,8 +142,8 @@ class ProductControllerTest {
         """;
 
     // When
-    when(productService.update(any(), eq(9L)))
-        .thenThrow(new EntityNotFoundException("Producto no encontrado"));
+    when(productService.update(any(ProductReqDTO.class), eq(9L)))
+        .thenThrow(new ProductNotFoundException(9L));
 
     // Then
     mockMvc
