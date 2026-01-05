@@ -1,13 +1,16 @@
 package com.soydz.ptsupermercado.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.soydz.ptsupermercado.dto.ProductReqDTO;
 import com.soydz.ptsupermercado.dto.ProductResDTO;
 import com.soydz.ptsupermercado.service.impl.ProductServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -86,5 +89,68 @@ class ProductControllerTest {
         .andExpect(jsonPath("$[0].category").value(productResDTO.category()))
         .andExpect(jsonPath("$[0].price").value(productResDTO.price()))
         .andExpect(jsonPath("$[0].supplierName").value(productResDTO.supplierName()));
+  }
+
+  @Test
+  void shouldReturn200AndUpdateProductWhenIdProductExist() throws Exception {
+    // Given
+    ProductResDTO productResDTO =
+        new ProductResDTO(9L, "Arroz floral", "Granos", BigDecimal.TEN, "Granos del sol");
+
+    String reqJson =
+        """
+              {
+                "id": 9,
+                "name": "Arroz floral",
+                "category": "Granos",
+                "price": 10.0,
+                "supplierName": "Granos del sol"
+              }
+              """;
+
+    // When
+    when(productService.update(any(ProductReqDTO.class), eq(9L))).thenReturn(productResDTO);
+
+    // Then
+    mockMvc
+        .perform(
+            put("/api/v1/productos/{id}", 9L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reqJson))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(productResDTO.id()))
+        .andExpect(jsonPath("$.name").value(productResDTO.name()))
+        .andExpect(jsonPath("$.category").value(productResDTO.category()))
+        .andExpect(jsonPath("$.price").value(productResDTO.price()))
+        .andExpect(jsonPath("$.supplierName").value(productResDTO.supplierName()));
+
+    verify(productService).update(any(ProductReqDTO.class), eq(9L));
+  }
+
+  @Test
+  void shouldReturn404WhenProductDoesNotExist() throws Exception {
+    // Given
+    String reqJson =
+        """
+            {
+              "id": 9,
+              "name": "Arroz floral",
+              "category": "Granos",
+              "price": 10.0,
+              "supplierName": "Granos del sol"
+            }
+        """;
+
+    // When
+    when(productService.update(any(), eq(9L)))
+        .thenThrow(new EntityNotFoundException("Producto no encontrado"));
+
+    // Then
+    mockMvc
+        .perform(
+            put("/api/v1/productos/{id}", 9L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reqJson))
+        .andExpect(status().isNotFound());
   }
 }

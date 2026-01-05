@@ -37,4 +37,10 @@ public class ProductController {
   public ResponseEntity<List<ProductResDTO>> findAll() {
     return ResponseEntity.ok(productService.findAll());
   }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<ProductResDTO> update(
+      @PathVariable("id") Long id, @Valid @RequestBody ProductReqDTO productReqDTO) {
+    return ResponseEntity.ok(productService.update(productReqDTO, id));
+  }
 }
