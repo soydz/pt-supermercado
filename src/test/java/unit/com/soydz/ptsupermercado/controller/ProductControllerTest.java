@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.soydz.ptsupermercado.dto.ProductReqDTO;
 import com.soydz.ptsupermercado.dto.ProductResDTO;
-import com.soydz.ptsupermercado.service.impl.ProductServiceImpl;
+import com.soydz.ptsupermercado.service.interfaces.IProductService;
 import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,7 +25,7 @@ class ProductControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockitoBean private ProductServiceImpl productService;
+  @MockitoBean private IProductService productService;
 
   @Test
   void shouldReturn400WhenProductIsNull() throws Exception {

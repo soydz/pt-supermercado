@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.soydz.ptsupermercado.service.impl.ProductServiceImpl;
+import com.soydz.ptsupermercado.service.interfaces.IProductService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ class GlobalExceptionHandlerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockitoBean private ProductServiceImpl productService;
+  @MockitoBean private IProductService productService;
 
   @Test
   void shouldReturn400WhenMethodArgumentNotValidExceptionOccurs() throws Exception {
