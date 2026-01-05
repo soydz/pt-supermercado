@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.soydz.ptsupermercado.dto.ProductReqDTO;
 import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
 import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
-import com.soydz.ptsupermercado.service.impl.ProductServiceImpl;
+import com.soydz.ptsupermercado.service.interfaces.IProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,7 +24,7 @@ class GlobalExceptionHandlerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockitoBean private ProductServiceImpl productService;
+  @MockitoBean private IProductService productService;
 
   @Test
   void shouldReturn400WhenMethodArgumentNotValidExceptionOccurs() throws Exception {
