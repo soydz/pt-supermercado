@@ -3,7 +3,7 @@ package com.soydz.ptsupermercado.advice;
 import com.soydz.ptsupermercado.dto.ApiErrorResDTO;
 import com.soydz.ptsupermercado.dto.ErrorDTO;
 import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
+import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
@@ -29,17 +29,9 @@ public class GlobalExceptionHandler {
         .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), "Validation failed", errors));
   }
 
-  @ExceptionHandler(value = EntityNotFoundException.class)
-  public ResponseEntity<ApiErrorResDTO> handleEntityNotFound(
-      EntityNotFoundException ex, HttpServletRequest req) {
-
-    return ResponseEntity.status(HttpStatus.NOT_FOUND)
-        .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), ex.getMessage(), List.of()));
-  }
-
-  @ExceptionHandler(value = ProductNotFoundException.class)
+  @ExceptionHandler({ProductNotFoundException.class, SupplierNotFoundException.class})
   public ResponseEntity<ApiErrorResDTO> handleProductEntityNotFound(
-      ProductNotFoundException ex, HttpServletRequest req) {
+      RuntimeException ex, HttpServletRequest req) {
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
         .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), ex.getMessage(), List.of()));
