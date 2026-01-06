@@ -1,5 +1,6 @@
 package com.soydz.ptsupermercado.controller;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -28,17 +29,26 @@ class ProductControllerTest {
   @MockitoBean private IProductService productService;
 
   @Test
-  void shouldReturn400WhenProductIsNull() throws Exception {
+  void shouldReturn400WhenProductIsInvalid() throws Exception {
     // Given
-    ProductResDTO res = new ProductResDTO(1L, "", "Granos", BigDecimal.ZERO, "Granos del sol");
-
-    // When
-    when(productService.save(any())).thenReturn(res);
+    String reqJson =
+        """
+        {
+          "name": "",
+          "category": "Granos",
+          "price": 0,
+          "supplierId": null
+        }
+        """;
 
     // Then
     mockMvc
-        .perform(post("/api/v1/productos").contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest());
+        .perform(post("/api/v1/productos").contentType(MediaType.APPLICATION_JSON).content(reqJson))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value("Validation failed"))
+        .andExpect(jsonPath("$.errors").isArray())
+        .andExpect(jsonPath("$.errors.length()").value(2))
+        .andExpect(jsonPath("$.errors[*].field").value(containsInAnyOrder("name", "price")));
   }
 
   @Test
@@ -47,7 +57,7 @@ class ProductControllerTest {
     ProductResDTO res =
         new ProductResDTO(1L, "Arroz floral", "Granos", BigDecimal.TEN, "Granos del sol");
 
-    String resJson =
+    String reqJson =
         """
         {
           "id": 9,
@@ -63,7 +73,7 @@ class ProductControllerTest {
 
     // Then
     mockMvc
-        .perform(post("/api/v1/productos").contentType(MediaType.APPLICATION_JSON).content(resJson))
+        .perform(post("/api/v1/productos").contentType(MediaType.APPLICATION_JSON).content(reqJson))
         .andExpect(status().isCreated())
         .andExpect(header().string("Location", "http://localhost/api/v1/productos/1"))
         .andExpect(jsonPath("$.name").value("Arroz floral"));
