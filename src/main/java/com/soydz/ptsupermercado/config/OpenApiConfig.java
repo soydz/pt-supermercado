@@ -1,6 +1,7 @@
 package com.soydz.ptsupermercado.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +12,10 @@ import org.springframework.context.annotation.Profile;
 @OpenAPIDefinition(
     info =
         @Info(
-            title = "Prueba Técnica Spring Boot - Supermercado",
+            title = "Spring Boot Technical Test - Supermarket",
             version = "0.0.1",
-            description = "Gestión de una cadena de supermercados"))
+            description = "Management of a supermarket chain",
+            contact = @Contact(name = "SoyDZ", email = "dev@soydz.com")))
 @Configuration
 public class OpenApiConfig {
 
