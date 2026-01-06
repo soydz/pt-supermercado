@@ -86,8 +86,7 @@ public class ProductController {
                                 }
                                 """)
                       }))
-          @Valid
-          @RequestBody
+          @Valid @RequestBody
           ProductReqDTO productReqDTO) {
 
     ProductResDTO res = productService.save(productReqDTO);
