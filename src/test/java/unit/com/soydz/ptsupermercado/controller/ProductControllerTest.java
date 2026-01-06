@@ -163,4 +163,13 @@ class ProductControllerTest {
                 .content(reqJson))
         .andExpect(status().isNotFound());
   }
+
+  @Test
+  void shouldReturn204WhenProductIsDeleted() throws Exception {
+    Long productId = 9L;
+
+    mockMvc.perform(delete("/api/v1/productos/{id}", productId)).andExpect(status().isNoContent());
+
+    verify(productService).delete(productId);
+  }
 }

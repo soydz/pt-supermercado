@@ -54,4 +54,9 @@ public class ProductServiceImpl implements IProductService {
 
     return ProductResDTO.fromEntity(productRepository.save(product));
   }
+
+  @Override
+  public void delete(Long id) {
+    productRepository.deleteById(id);
+  }
 }

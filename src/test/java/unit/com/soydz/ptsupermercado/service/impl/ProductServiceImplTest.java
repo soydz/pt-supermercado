@@ -155,4 +155,16 @@ class ProductServiceImplTest {
     assertEquals(updateProduct.getSupplier().getName(), result.supplierName());
     assertEquals(existingProduct, savedProduct);
   }
+
+  @Test
+  void shouldDeleteByProductId() {
+    // Given
+    Long productId = 5L;
+
+    // When
+    productService.delete(productId);
+
+    // Then
+    verify(productRepository).deleteById(productId);
+  }
 }

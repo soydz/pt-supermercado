@@ -14,4 +14,6 @@ public interface IProductService {
   Product findById(Long id);
 
   ProductResDTO update(ProductReqDTO productReqDTO, Long id);
+
+  void delete(Long id);
 }
