@@ -1,5 +1,6 @@
 package com.soydz.ptsupermercado.advice;
 
+import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.soydz.ptsupermercado.controller.ProductController;
 import com.soydz.ptsupermercado.dto.ProductReqDTO;
 import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
 import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
@@ -15,11 +17,13 @@ import com.soydz.ptsupermercado.service.interfaces.IProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest
+@WebMvcTest(ProductController.class)
+@Import(GlobalExceptionHandler.class)
 class GlobalExceptionHandlerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -41,6 +45,8 @@ class GlobalExceptionHandlerTest {
         .perform(post("/api/v1/productos").contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("Validation failed"))
+        .andExpect(jsonPath("$.errors").isArray())
+        .andExpect(jsonPath("$.errors[*].field").value(hasItem("name")))
         .andExpect(jsonPath("$.errors[?(@.field=='name')].message").value("must not be blank"))
         .andExpect(jsonPath("$.errors[?(@.field=='price')].message").value("must not be null"));
   }
