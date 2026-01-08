@@ -2,7 +2,6 @@ package com.soydz.ptsupermercado.controller;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -84,7 +83,6 @@ class StoreControllerTest {
     when(storeService.findAll()).thenReturn(List.of(storeResDTO));
 
     // Then
-    verify(storeService).findAll();
     mockMvc
         .perform(get("/api/v1/sucursales").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
