@@ -2,13 +2,16 @@ package com.soydz.ptsupermercado.controller;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.soydz.ptsupermercado.dto.StoreReqDTO;
 import com.soydz.ptsupermercado.dto.StoreResDTO;
 import com.soydz.ptsupermercado.service.interfaces.IStoreService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -70,5 +73,26 @@ class StoreControllerTest {
         .andExpect(jsonPath("$.errors").isArray())
         .andExpect(jsonPath("$.errors.length()").value(3))
         .andExpect(jsonPath("$.errors[*].field").value(containsInAnyOrder("city", "city", "name")));
+  }
+
+  @Test
+  void shouldReturn200AndStoreListWhenStoresExist() throws Exception {
+    // Given
+    StoreResDTO storeResDTO = new StoreResDTO(13L, "Los colores", "calle 12 # 45-07", "Medellin");
+
+    // When
+    when(storeService.findAll()).thenReturn(List.of(storeResDTO));
+
+    // Then
+    verify(storeService).findAll();
+    mockMvc
+        .perform(get("/api/v1/sucursales").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$.[0].id").value(storeResDTO.id()))
+        .andExpect(jsonPath("$.[0].name").value(storeResDTO.name()))
+        .andExpect(jsonPath("$.[0].address").value(storeResDTO.address()))
+        .andExpect(jsonPath("$.[0].city").value(storeResDTO.city()));
   }
 }
