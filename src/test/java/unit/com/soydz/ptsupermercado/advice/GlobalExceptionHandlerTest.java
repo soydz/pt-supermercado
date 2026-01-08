@@ -10,10 +10,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.soydz.ptsupermercado.controller.ProductController;
+import com.soydz.ptsupermercado.controller.StoreController;
 import com.soydz.ptsupermercado.dto.ProductReqDTO;
+import com.soydz.ptsupermercado.dto.StoreReqDTO;
 import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
+import com.soydz.ptsupermercado.service.exception.StoreDuplicateNameException;
 import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
 import com.soydz.ptsupermercado.service.interfaces.IProductService;
+import com.soydz.ptsupermercado.service.interfaces.IStoreService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,12 +27,14 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(ProductController.class)
-@Import(GlobalExceptionHandler.class)
+@Import({GlobalExceptionHandler.class, StoreController.class})
 class GlobalExceptionHandlerTest {
 
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private IProductService productService;
+
+  @MockitoBean private IStoreService storeService;
 
   @Test
   void shouldReturn400WhenMethodArgumentNotValidExceptionOccurs() throws Exception {
@@ -91,13 +97,13 @@ class GlobalExceptionHandlerTest {
 
     String body =
         """
-                        {
-                          "name": "Arroz",
-                          "category": "Grano",
-                          "price": 500,
-                          "supplierId": 79
-                        }
-                      """;
+            {
+              "name": "Arroz",
+              "category": "Grano",
+              "price": 500,
+              "supplierId": 79
+            }
+        """;
 
     // Then
     mockMvc
@@ -107,5 +113,28 @@ class GlobalExceptionHandlerTest {
                 .content(body))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message").value("Supplier with id " + supplierId + " not found"));
+  }
+
+  @Test
+  void ShouldReturn409WhenStoreDuplicateNameExceptionOccurs() throws Exception {
+    String storeName = "Villa nueva";
+
+    // When
+    when(storeService.save(any(StoreReqDTO.class)))
+        .thenThrow(new StoreDuplicateNameException(storeName));
+
+    String body =
+        """
+            {
+              "name": "Olaya cali",
+              "address": "Carrera 12 # 26-03",
+              "city": "Cali"
+            }
+        """;
+
+    // Then
+    mockMvc
+        .perform(post("/api/v1/sucursales").contentType(MediaType.APPLICATION_JSON).content(body))
+        .andExpect(status().isConflict());
   }
 }
