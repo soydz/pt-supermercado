@@ -3,6 +3,7 @@ package com.soydz.ptsupermercado.advice;
 import com.soydz.ptsupermercado.dto.ApiErrorResDTO;
 import com.soydz.ptsupermercado.dto.ErrorDTO;
 import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
+import com.soydz.ptsupermercado.service.exception.StoreDuplicateNameException;
 import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
@@ -34,6 +35,14 @@ public class GlobalExceptionHandler {
       RuntimeException ex, HttpServletRequest req) {
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), ex.getMessage(), List.of()));
+  }
+
+  @ExceptionHandler(value = StoreDuplicateNameException.class)
+  public ResponseEntity<ApiErrorResDTO> handleStoreDuplicateName(
+      StoreDuplicateNameException ex, HttpServletRequest req) {
+
+    return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), ex.getMessage(), List.of()));
   }
 }
