@@ -10,6 +10,7 @@ import com.soydz.ptsupermercado.entity.Store;
 import com.soydz.ptsupermercado.repository.IStoreRepository;
 import com.soydz.ptsupermercado.service.exception.StoreDuplicateNameException;
 import com.soydz.ptsupermercado.service.impl.StoreServiceImpl;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,5 +63,26 @@ class StoreServiceImplTest {
     when(storeRepository.existsByName(any(String.class))).thenReturn(true);
 
     assertThrows(StoreDuplicateNameException.class, () -> storeService.save(storeReqDTO));
+  }
+
+  @Test
+  void shouldReturnStoreResDTOListWhenFindAllIsSuccessful() {
+    // Given
+    Store store = StoreReqDTO.toEntity(storeReqDTO);
+
+    // When
+    when(storeRepository.findAll()).thenReturn(List.of(store));
+
+    List<StoreResDTO> result = storeService.findAll();
+
+    // Then
+    verify(storeRepository).findAll();
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(store.getId(), result.getFirst().id());
+    assertEquals(store.getName(), result.getFirst().name());
+    assertEquals(store.getAddress(), result.getFirst().address());
+    assertEquals(store.getCity(), result.getFirst().city());
   }
 }

@@ -13,11 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Tag(
@@ -92,5 +90,33 @@ public class StoreController {
             .toUri();
 
     return ResponseEntity.created(location).body(res);
+  }
+
+  @Operation(summary = "Get all stores", description = "Returns a list of all available stores")
+  @ApiResponse(
+      responseCode = "200",
+      description = "Stores found",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = StoreResDTO.class),
+              examples = {
+                @ExampleObject(
+                    name = "Stores found",
+                    value =
+                        """
+                            [
+                              {
+                                "id": 1,
+                                "name": "Olaya cali",
+                                "address": "Carrera 12 # 26-03",
+                                "city": "Cali"
+                              }
+                            ]
+                        """)
+              }))
+  @GetMapping
+  public ResponseEntity<List<StoreResDTO>> findByAll() {
+    return ResponseEntity.ok(storeService.findAll());
   }
 }

@@ -5,6 +5,7 @@ import com.soydz.ptsupermercado.dto.StoreResDTO;
 import com.soydz.ptsupermercado.repository.IStoreRepository;
 import com.soydz.ptsupermercado.service.exception.StoreDuplicateNameException;
 import com.soydz.ptsupermercado.service.interfaces.IStoreService;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,5 +24,10 @@ public class StoreServiceImpl implements IStoreService {
     }
 
     return StoreResDTO.fromEntity(storeRepository.save(StoreReqDTO.toEntity(storeReqDTO)));
+  }
+
+  @Override
+  public List<StoreResDTO> findAll() {
+    return storeRepository.findAll().stream().map(StoreResDTO::fromEntity).toList();
   }
 }
