@@ -4,6 +4,7 @@ import com.soydz.ptsupermercado.dto.ApiErrorResDTO;
 import com.soydz.ptsupermercado.dto.ErrorDTO;
 import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
 import com.soydz.ptsupermercado.service.exception.StoreDuplicateNameException;
+import com.soydz.ptsupermercado.service.exception.StoreNotFoundException;
 import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
@@ -30,7 +31,11 @@ public class GlobalExceptionHandler {
         .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), "Validation failed", errors));
   }
 
-  @ExceptionHandler({ProductNotFoundException.class, SupplierNotFoundException.class})
+  @ExceptionHandler({
+    ProductNotFoundException.class,
+    SupplierNotFoundException.class,
+    StoreNotFoundException.class
+  })
   public ResponseEntity<ApiErrorResDTO> handleProductEntityNotFound(
       RuntimeException ex, HttpServletRequest req) {
 

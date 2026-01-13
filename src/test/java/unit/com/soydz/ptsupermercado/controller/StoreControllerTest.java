@@ -1,14 +1,15 @@
 package com.soydz.ptsupermercado.controller;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.soydz.ptsupermercado.dto.StoreReqDTO;
 import com.soydz.ptsupermercado.dto.StoreResDTO;
+import com.soydz.ptsupermercado.service.exception.StoreNotFoundException;
 import com.soydz.ptsupermercado.service.interfaces.IStoreService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -92,5 +93,62 @@ class StoreControllerTest {
         .andExpect(jsonPath("$.[0].name").value(storeResDTO.name()))
         .andExpect(jsonPath("$.[0].address").value(storeResDTO.address()))
         .andExpect(jsonPath("$.[0].city").value(storeResDTO.city()));
+  }
+
+  @Test
+  void shouldReturn200AndUpdateStoreWhenIdStoreExist() throws Exception {
+    // Given
+    StoreResDTO storeResDTO = new StoreResDTO(11L, "Primavera", "Calle 11 # 15-25", "Bucaramanga");
+
+    String reqJson =
+        """
+            {
+              "name": "Primavera",
+              "address": "Calle 11 # 15-25",
+              "city": "Bucaramanga"
+            }
+        """;
+
+    // When
+    when(storeService.update(any(StoreReqDTO.class), anyLong())).thenReturn(storeResDTO);
+
+    // Then
+    mockMvc
+        .perform(
+            put("/api/v1/sucursales/{id}", 11L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reqJson))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(storeResDTO.id()))
+        .andExpect(jsonPath("$.name").value(storeResDTO.name()))
+        .andExpect(jsonPath("$.address").value(storeResDTO.address()))
+        .andExpect(jsonPath("$.city").value(storeResDTO.city()));
+
+    verify(storeService).update(any(StoreReqDTO.class), eq(11L));
+  }
+
+  @Test
+  void shouldReturn404WhenStoreDoesNotExist() throws Exception {
+    // Given
+    String reqJson =
+        """
+          {
+            "name": "Primavera",
+            "address": "Calle 11 # 15-25",
+            "city": "Bucaramanga"
+          }
+        """;
+
+    // When
+    when(storeService.update(any(StoreReqDTO.class), anyLong()))
+        .thenThrow(new StoreNotFoundException(11L));
+
+    // Then
+    mockMvc
+        .perform(
+            put("/api/v1/sucursales/{id}", 11L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(reqJson))
+        .andExpect(status().isNotFound());
   }
 }

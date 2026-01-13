@@ -9,8 +9,10 @@ import com.soydz.ptsupermercado.dto.StoreResDTO;
 import com.soydz.ptsupermercado.entity.Store;
 import com.soydz.ptsupermercado.repository.IStoreRepository;
 import com.soydz.ptsupermercado.service.exception.StoreDuplicateNameException;
+import com.soydz.ptsupermercado.service.exception.StoreNotFoundException;
 import com.soydz.ptsupermercado.service.impl.StoreServiceImpl;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -84,5 +86,42 @@ class StoreServiceImplTest {
     assertEquals(store.getName(), result.getFirst().name());
     assertEquals(store.getAddress(), result.getFirst().address());
     assertEquals(store.getCity(), result.getFirst().city());
+  }
+
+  @Test
+  void shouldReturnStoreNotFoundExceptionWhenIdStoreDoesNotExist() {
+
+    // When
+    when(storeRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+
+    // Then
+    assertThrows(StoreNotFoundException.class, () -> storeService.findById(9L));
+  }
+
+  @Test
+  void shouldReturnStoreResDTOWhenUpdateIsSuccessful() {
+    // Given
+    StoreReqDTO updateStoreReqDTO =
+        new StoreReqDTO("Primavera", "calle 12 # 42-25", "Barranquilla");
+
+    Store updateStore = StoreReqDTO.toEntity(storeReqDTO);
+    updateStore.setName("Primavera");
+    updateStore.setAddress("calle 12 # 42-25");
+    updateStore.setCity("Barranquilla");
+
+    // When
+    when(storeRepository.findById(any(Long.class)))
+        .thenReturn(Optional.of(StoreReqDTO.toEntity(storeReqDTO)));
+    when(storeRepository.save(any(Store.class))).thenReturn(updateStore);
+
+    StoreResDTO result = storeService.update(updateStoreReqDTO, 3L);
+
+    // Then
+    verify(storeRepository).findById(3L);
+
+    assertEquals(updateStore.getId(), result.id());
+    assertEquals(updateStore.getName(), result.name());
+    assertEquals(updateStore.getAddress(), result.address());
+    assertEquals(updateStore.getCity(), result.city());
   }
 }

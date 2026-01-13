@@ -5,6 +5,7 @@ import com.soydz.ptsupermercado.dto.StoreReqDTO;
 import com.soydz.ptsupermercado.dto.StoreResDTO;
 import com.soydz.ptsupermercado.service.interfaces.IStoreService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -118,5 +119,63 @@ public class StoreController {
   @GetMapping
   public ResponseEntity<List<StoreResDTO>> findByAll() {
     return ResponseEntity.ok(storeService.findAll());
+  }
+
+  @Operation(summary = "Update a store", description = "Updates an existing store by its ID ")
+  @ApiResponses({
+    @ApiResponse(
+        responseCode = "200",
+        description = "Store successfully update",
+        content = @Content(schema = @Schema(implementation = StoreResDTO.class))),
+    @ApiResponse(
+        responseCode = "400",
+        description = "Validation failed",
+        content =
+            @Content(
+                schema = @Schema(implementation = ApiErrorResDTO.class),
+                examples = {
+                  @ExampleObject(
+                      name = "Validation failed",
+                      value =
+                          """
+                            {
+                              "timestamp": "2026-01-08T23:58:36.077570Z",
+                              "path": "/api/v1/sucursales/1",
+                              "message": "Validation failed",
+                              "errors": [
+                                {
+                                  "field": "name",
+                                  "message": "no debe estar vacío"
+                                }
+                              ]
+                            }
+                          """)
+                })),
+    @ApiResponse(
+        responseCode = "404",
+        description = "Store not found",
+        content =
+            @Content(
+                schema = @Schema(implementation = ApiErrorResDTO.class),
+                examples = {
+                  @ExampleObject(
+                      name = "StoreNotFound",
+                      value =
+                          """
+                            {
+                              "timestamp": "2026-01-08T23:57:20.787467Z",
+                              "path": "/api/v1/sucursales/7",
+                              "message": "Store with id 7 not found",
+                              "errors": []
+                            }
+                          """)
+                }))
+  })
+  @PutMapping("/{id}")
+  public ResponseEntity<StoreResDTO> update(
+      @Parameter(description = "Store id", example = "7", required = true) @PathVariable("id")
+          Long id,
+      @Valid @RequestBody StoreReqDTO storeReqDTO) {
+    return ResponseEntity.ok(storeService.update(storeReqDTO, id));
   }
 }
