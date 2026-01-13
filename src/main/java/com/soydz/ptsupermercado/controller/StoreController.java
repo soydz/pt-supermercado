@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -35,22 +34,21 @@ public class StoreController {
   @Operation(
       summary = "Create a store",
       description = "Creates a new store and return the created resource")
-  @ApiResponses({
-    @ApiResponse(
-        responseCode = "201",
-        description = "store successfully created",
-        content = @Content(schema = @Schema(implementation = StoreResDTO.class))),
-    @ApiResponse(
-        responseCode = "400",
-        description = "Validation failed",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiErrorResDTO.class),
-                examples = {
-                  @ExampleObject(
-                      name = "Validation failed",
-                      value =
-                          """
+  @ApiResponse(
+      responseCode = "201",
+      description = "store successfully created",
+      content = @Content(schema = @Schema(implementation = StoreResDTO.class)))
+  @ApiResponse(
+      responseCode = "400",
+      description = "Validation failed",
+      content =
+          @Content(
+              schema = @Schema(implementation = ApiErrorResDTO.class),
+              examples = {
+                @ExampleObject(
+                    name = "Validation failed",
+                    value =
+                        """
                             {
                               "timestamp": "2026-01-06T17:07:58.954033Z",
                               "path": "/api/v1/sucursales",
@@ -58,8 +56,7 @@ public class StoreController {
                               "errors": []
                             }
                           """)
-                }))
-  })
+              }))
   @PostMapping
   public ResponseEntity<StoreResDTO> save(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -122,22 +119,21 @@ public class StoreController {
   }
 
   @Operation(summary = "Update a store", description = "Updates an existing store by its ID ")
-  @ApiResponses({
-    @ApiResponse(
-        responseCode = "200",
-        description = "Store successfully update",
-        content = @Content(schema = @Schema(implementation = StoreResDTO.class))),
-    @ApiResponse(
-        responseCode = "400",
-        description = "Validation failed",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiErrorResDTO.class),
-                examples = {
-                  @ExampleObject(
-                      name = "Validation failed",
-                      value =
-                          """
+  @ApiResponse(
+      responseCode = "200",
+      description = "Store successfully update",
+      content = @Content(schema = @Schema(implementation = StoreResDTO.class)))
+  @ApiResponse(
+      responseCode = "400",
+      description = "Validation failed",
+      content =
+          @Content(
+              schema = @Schema(implementation = ApiErrorResDTO.class),
+              examples = {
+                @ExampleObject(
+                    name = "Validation failed",
+                    value =
+                        """
                             {
                               "timestamp": "2026-01-08T23:58:36.077570Z",
                               "path": "/api/v1/sucursales/1",
@@ -150,18 +146,18 @@ public class StoreController {
                               ]
                             }
                           """)
-                })),
-    @ApiResponse(
-        responseCode = "404",
-        description = "Store not found",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiErrorResDTO.class),
-                examples = {
-                  @ExampleObject(
-                      name = "StoreNotFound",
-                      value =
-                          """
+              }))
+  @ApiResponse(
+      responseCode = "404",
+      description = "Store not found",
+      content =
+          @Content(
+              schema = @Schema(implementation = ApiErrorResDTO.class),
+              examples = {
+                @ExampleObject(
+                    name = "StoreNotFound",
+                    value =
+                        """
                             {
                               "timestamp": "2026-01-08T23:57:20.787467Z",
                               "path": "/api/v1/sucursales/7",
@@ -169,8 +165,7 @@ public class StoreController {
                               "errors": []
                             }
                           """)
-                }))
-  })
+              }))
   @PutMapping("/{id}")
   public ResponseEntity<StoreResDTO> update(
       @Parameter(description = "Store id", example = "7", required = true) @PathVariable("id")
