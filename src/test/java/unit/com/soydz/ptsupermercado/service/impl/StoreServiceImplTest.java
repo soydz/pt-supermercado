@@ -124,4 +124,16 @@ class StoreServiceImplTest {
     assertEquals(updateStore.getAddress(), result.address());
     assertEquals(updateStore.getCity(), result.city());
   }
+
+  @Test
+  void shouldDeleteByStoreId() {
+    // Given
+    Long storeId = 6L;
+
+    // When
+    storeService.delete(storeId);
+
+    // Then
+    verify(storeRepository).deleteById(storeId);
+  }
 }

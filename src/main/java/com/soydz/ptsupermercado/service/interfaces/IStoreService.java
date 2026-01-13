@@ -14,4 +14,6 @@ public interface IStoreService {
   Store findById(Long id);
 
   StoreResDTO update(StoreReqDTO storeReqDTO, Long id);
+
+  void delete(Long id);
 }
