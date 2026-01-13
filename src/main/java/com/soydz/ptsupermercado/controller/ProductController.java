@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -35,22 +34,21 @@ public class ProductController {
   @Operation(
       summary = "Create a product",
       description = "Creates a new product and return the created resource")
-  @ApiResponses({
-    @ApiResponse(
-        responseCode = "201",
-        description = "Product successfully created",
-        content = @Content(schema = @Schema(implementation = ProductResDTO.class))),
-    @ApiResponse(
-        responseCode = "400",
-        description = "Validation failed",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiErrorResDTO.class),
-                examples = {
-                  @ExampleObject(
-                      name = "Validation failed",
-                      value =
-                          """
+  @ApiResponse(
+      responseCode = "201",
+      description = "Product successfully created",
+      content = @Content(schema = @Schema(implementation = ProductResDTO.class)))
+  @ApiResponse(
+      responseCode = "400",
+      description = "Validation failed",
+      content =
+          @Content(
+              schema = @Schema(implementation = ApiErrorResDTO.class),
+              examples = {
+                @ExampleObject(
+                    name = "Validation failed",
+                    value =
+                        """
                             {
                               "timestamp": "2026-01-06T17:07:58.954033Z",
                               "path": "/api/v1/productos",
@@ -63,8 +61,7 @@ public class ProductController {
                               ]
                             }
                           """)
-                }))
-  })
+              }))
   @PostMapping
   public ResponseEntity<ProductResDTO> save(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -130,26 +127,25 @@ public class ProductController {
   }
 
   @Operation(summary = "Update a product", description = "Updates an existing product by its ID")
-  @ApiResponses({
-    @ApiResponse(
-        responseCode = "200",
-        description = "Product successfully update",
-        content = @Content(schema = @Schema(implementation = ProductResDTO.class))),
-    @ApiResponse(
-        responseCode = "400",
-        description = "Validation failed",
-        content = @Content(schema = @Schema(implementation = ApiErrorResDTO.class))),
-    @ApiResponse(
-        responseCode = "404",
-        description = "Product not found",
-        content =
-            @Content(
-                schema = @Schema(implementation = ApiErrorResDTO.class),
-                examples = {
-                  @ExampleObject(
-                      name = "ProductNotFound",
-                      value =
-                          """
+  @ApiResponse(
+      responseCode = "200",
+      description = "Product successfully update",
+      content = @Content(schema = @Schema(implementation = ProductResDTO.class)))
+  @ApiResponse(
+      responseCode = "400",
+      description = "Validation failed",
+      content = @Content(schema = @Schema(implementation = ApiErrorResDTO.class)))
+  @ApiResponse(
+      responseCode = "404",
+      description = "Product not found",
+      content =
+          @Content(
+              schema = @Schema(implementation = ApiErrorResDTO.class),
+              examples = {
+                @ExampleObject(
+                    name = "ProductNotFound",
+                    value =
+                        """
                             {
                               "timestamp": "2026-01-06T14:33:26.837426Z",
                               "path": "/api/v1/productos/10",
@@ -157,8 +153,7 @@ public class ProductController {
                               "errors": []
                             }
                           """)
-                }))
-  })
+              }))
   @PutMapping("/{id}")
   public ResponseEntity<ProductResDTO> update(
       @Parameter(description = "Product ID", example = "10", required = true) @PathVariable("id")
