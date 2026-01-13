@@ -178,4 +178,14 @@ public class StoreController {
       @Valid @RequestBody StoreReqDTO storeReqDTO) {
     return ResponseEntity.ok(storeService.update(storeReqDTO, id));
   }
+
+  @Operation(summary = "Delete a store", description = "Delete a store by its ID")
+  @ApiResponse(responseCode = "204", description = "Store successfully deleted")
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(
+      @Parameter(description = "Store id", example = "10", required = true) @PathVariable("id")
+          Long id) {
+    storeService.delete(id);
+    return ResponseEntity.noContent().build();
+  }
 }

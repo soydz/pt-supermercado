@@ -48,4 +48,9 @@ public class StoreServiceImpl implements IStoreService {
 
     return StoreResDTO.fromEntity(storeRepository.save(store));
   }
+
+  @Override
+  public void delete(Long id) {
+    storeRepository.deleteById(id);
+  }
 }

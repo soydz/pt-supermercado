@@ -151,4 +151,15 @@ class StoreControllerTest {
                 .content(reqJson))
         .andExpect(status().isNotFound());
   }
+
+  @Test
+  void shouldReturn204WhenStoreIsDeleted() throws Exception {
+    // Given
+    Long storeId = 13L;
+
+    // Then
+    mockMvc.perform(delete("/api/v1/sucursales/{id}", storeId)).andExpect(status().isNoContent());
+
+    verify(storeService).delete(storeId);
+  }
 }
