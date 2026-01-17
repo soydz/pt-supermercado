@@ -6,6 +6,7 @@ import com.soydz.ptsupermercado.entity.Product;
 import com.soydz.ptsupermercado.entity.Supplier;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -49,7 +50,7 @@ class ProductRepositoryIT {
     // When
     Product saved =
         productRepository.saveAndFlush(
-            new Product("Arroz floral", "granos", BigDecimal.valueOf(15), supplier));
+            new Product("Arroz floral", "granos", BigDecimal.valueOf(15), supplier, List.of()));
 
     entityManager.clear();
 
