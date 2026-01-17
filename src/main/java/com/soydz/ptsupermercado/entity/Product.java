@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -24,13 +25,22 @@ public class Product {
       foreignKey = @ForeignKey(name = "fk_product_supplier"))
   private Supplier supplier;
 
+  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+  @NotNull private List<SalesDetails> salesDetails;
+
   public Product() {}
 
-  public Product(String name, String category, BigDecimal price, Supplier supplier) {
+  public Product(
+      String name,
+      String category,
+      BigDecimal price,
+      Supplier supplier,
+      List<SalesDetails> salesDetails) {
     this.name = name;
     this.category = category;
     this.price = price;
     this.supplier = supplier;
+    this.salesDetails = salesDetails;
   }
 
   public Long getId() {
@@ -71,5 +81,13 @@ public class Product {
 
   public void setSupplier(Supplier supplier) {
     this.supplier = supplier;
+  }
+
+  public List<SalesDetails> getSalesDetails() {
+    return salesDetails;
+  }
+
+  public void setSalesDetails(List<SalesDetails> salesDetails) {
+    this.salesDetails = salesDetails;
   }
 }
