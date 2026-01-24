@@ -8,15 +8,16 @@ import static org.mockito.Mockito.*;
 import com.soydz.ptsupermercado.dto.ProductDetailsDTO;
 import com.soydz.ptsupermercado.dto.SaleReqDTO;
 import com.soydz.ptsupermercado.dto.SaleResDTO;
-import com.soydz.ptsupermercado.entity.Product;
-import com.soydz.ptsupermercado.entity.Sale;
-import com.soydz.ptsupermercado.entity.Store;
+import com.soydz.ptsupermercado.entity.*;
 import com.soydz.ptsupermercado.repository.ISaleRepository;
 import com.soydz.ptsupermercado.service.exception.StoreNotFoundException;
 import com.soydz.ptsupermercado.service.impl.SaleServiceImpl;
 import com.soydz.ptsupermercado.service.interfaces.IProductService;
 import com.soydz.ptsupermercado.service.interfaces.IStoreService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -109,5 +110,81 @@ class SaleServiceImplTest {
     assertThrows(StoreNotFoundException.class, () -> saleService.save(saleReqDTO));
 
     verify(saleRepository, never()).save(any());
+  }
+
+  @Test
+  void shouldReturnSalesWhenFilterByStoreIdAndCreationDate() {
+    // Given
+    Long storeId = 6L;
+    LocalDate date = LocalDate.of(2026, 1, 15);
+
+    Store store = new Store();
+    store.setId(storeId);
+    store.setName("Primavera");
+    store.setAddress("Calle 12 # 19-11");
+    store.setCity("Cartagena");
+
+    Supplier supplier = new Supplier();
+    supplier.setId(1L);
+    supplier.setName("Granos el trigal");
+    supplier.setEmail("clientes@granosdeltolima.com");
+
+    Product product = new Product();
+    product.setId(2L);
+    product.setName("Arroz la abundancia");
+    product.setCategory("Granos");
+    product.setPrice(BigDecimal.valueOf(1850));
+    product.setSupplier(supplier);
+
+    Sale sale = new Sale();
+    sale.setStore(store);
+
+    SalesDetails salesDetails = new SalesDetails(sale, product, 5);
+
+    sale.setSalesDetails(Set.of(salesDetails));
+
+    // When
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(saleRepository.findByStoreIdAndCreationDate(store, date)).thenReturn(List.of(sale));
+
+    List<SaleResDTO> result = saleService.findByStoreIdAndCreationDate(storeId, date);
+
+    // Then
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(storeId, result.getFirst().storeId());
+    assertEquals(store.getName(), result.getFirst().storeName());
+    assertEquals(
+        salesDetails.getProduct().getName(),
+        result.getFirst().salesDetails().getFirst().productName());
+    assertEquals(
+        salesDetails.getQuantity(), result.getFirst().salesDetails().getFirst().quantity());
+    assertEquals(
+        salesDetails.getProduct().getPrice(),
+        result.getFirst().salesDetails().getFirst().productPrice());
+
+    verify(storeService).findById(storeId);
+    verify(saleRepository).findByStoreIdAndCreationDate(store, date);
+  }
+
+  @Test
+  void findByStoreIdAndCreationDateWhenNotSalesFoundShouldReturnEmptyList() {
+    // Given
+    Long storeId = 4L;
+    LocalDate creationDate = LocalDate.of(2026, 1, 12);
+    Store store = new Store();
+    store.setId(storeId);
+
+    // When
+    when(storeService.findById(storeId)).thenReturn(store);
+    when(saleRepository.findByStoreIdAndCreationDate(store, creationDate)).thenReturn(List.of());
+
+    List<SaleResDTO> result = saleService.findByStoreIdAndCreationDate(storeId, creationDate);
+
+    // Then
+    assertTrue(result.isEmpty());
+    verify(storeService).findById(storeId);
+    verify(saleRepository).findByStoreIdAndCreationDate(store, creationDate);
+    verify(saleRepository).findByStoreIdAndCreationDate(store, creationDate);
   }
 }

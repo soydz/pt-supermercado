@@ -10,6 +10,8 @@ import com.soydz.ptsupermercado.repository.ISaleRepository;
 import com.soydz.ptsupermercado.service.interfaces.IProductService;
 import com.soydz.ptsupermercado.service.interfaces.ISaleService;
 import com.soydz.ptsupermercado.service.interfaces.IStoreService;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,5 +49,14 @@ public class SaleServiceImpl implements ISaleService {
             });
 
     return SaleResDTO.fromEntity(saleRepository.save(sale));
+  }
+
+  @Override
+  public List<SaleResDTO> findByStoreIdAndCreationDate(Long storeId, LocalDate creationDate) {
+    return saleRepository
+        .findByStoreIdAndCreationDate(storeService.findById(storeId), creationDate)
+        .stream()
+        .map(SaleResDTO::fromEntity)
+        .toList();
   }
 }
