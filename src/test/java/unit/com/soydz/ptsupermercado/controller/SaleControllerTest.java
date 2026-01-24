@@ -2,6 +2,7 @@ package com.soydz.ptsupermercado.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -11,7 +12,9 @@ import com.soydz.ptsupermercado.dto.SalesDetailsDTO;
 import com.soydz.ptsupermercado.service.exception.StoreNotFoundException;
 import com.soydz.ptsupermercado.service.interfaces.ISaleService;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,5 +140,99 @@ class SaleControllerTest {
         .andExpect(jsonPath("$.message").value("Store with id " + storeId + " not found"));
 
     verify(saleService).save(any(SaleReqDTO.class));
+  }
+
+  @Test
+  void shouldReturn200WhenSuccessfullyRetrievedSalesList() throws Exception {
+    // Given
+    Long storeId = 1L;
+    LocalDate creationDate = LocalDate.of(2026, 1, 13);
+
+    SalesDetailsDTO salesDetailsDTO =
+        new SalesDetailsDTO(4, "Avena del molino", BigDecimal.valueOf(3550));
+
+    SaleResDTO saleResDTO =
+        new SaleResDTO(3L, creationDate.atStartOfDay(), 2L, "Las Torres", List.of(salesDetailsDTO));
+
+    // When
+    when(saleService.findByStoreIdAndCreationDate(storeId, creationDate))
+        .thenReturn(List.of(saleResDTO));
+
+    // Then
+    mockMvc
+        .perform(
+            get("/api/v1/ventas")
+                .param("sucursalId", "1")
+                .param("fecha", "2026-01-13")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(1))
+        .andExpect(jsonPath("$.[0].id").value(saleResDTO.id()))
+        .andExpect(jsonPath("$.[0].storeName").value(saleResDTO.storeName()))
+        .andExpect(jsonPath("$.[0].storeId").value(saleResDTO.storeId()))
+        .andExpect(
+            jsonPath("$.[0].creationDate")
+                .value(saleResDTO.creationDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+        .andExpect(
+            jsonPath("$.[0].salesDetails.[0].productName")
+                .value(saleResDTO.salesDetails().getFirst().productName()))
+        .andExpect(
+            jsonPath("$.[0].salesDetails.[0].productPrice")
+                .value(saleResDTO.salesDetails().getFirst().productPrice()))
+        .andExpect(
+            jsonPath("$.[0].salesDetails.[0].quantity")
+                .value(saleResDTO.salesDetails().getFirst().quantity()));
+  }
+
+  @Test
+  void shouldReturn400WhenStoreIdParamIsMissing() throws Exception {
+    mockMvc
+        .perform(
+            get("/api/v1/ventas").param("fecha", "2026-01-12").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void shouldReturn400WhenDateFormatIsInvalid() throws Exception {
+    mockMvc
+        .perform(
+            get("/api/v1/ventas")
+                .param("sucursalId", "2")
+                .param("fecha", "12-01-2026")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void shouldReturn404WhenStoreDoesNotExist() throws Exception {
+    when(saleService.findByStoreIdAndCreationDate(anyLong(), any(LocalDate.class)))
+        .thenThrow(StoreNotFoundException.class);
+
+    // Then
+    mockMvc
+        .perform(
+            get("/api/v1/ventas")
+                .param("sucursalId", "2")
+                .param("fecha", "2026-01-12")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void shouldReturn200WithEmptyListWhenNoSalesFound() throws Exception {
+    when(saleService.findByStoreIdAndCreationDate(anyLong(), any(LocalDate.class)))
+        .thenReturn(List.of());
+
+    // Then
+    mockMvc
+        .perform(
+            get("/api/v1/ventas")
+                .param("sucursalId", "1")
+                .param("fecha", "2026-01-12")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isArray())
+        .andExpect(jsonPath("$.length()").value(0));
   }
 }

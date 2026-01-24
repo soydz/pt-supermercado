@@ -8,12 +8,15 @@ import com.soydz.ptsupermercado.service.exception.StoreNotFoundException;
 import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -48,6 +51,17 @@ public class GlobalExceptionHandler {
       StoreDuplicateNameException ex, HttpServletRequest req) {
 
     return ResponseEntity.status(HttpStatus.CONFLICT)
+        .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), ex.getMessage(), List.of()));
+  }
+
+  @ExceptionHandler({
+    DateTimeParseException.class,
+    MethodArgumentTypeMismatchException.class,
+    MissingServletRequestParameterException.class
+  })
+  public ResponseEntity<ApiErrorResDTO> handleValidation(
+      RuntimeException ex, HttpServletRequest req) {
+    return ResponseEntity.badRequest()
         .body(new ApiErrorResDTO(Instant.now(), req.getRequestURI(), ex.getMessage(), List.of()));
   }
 }

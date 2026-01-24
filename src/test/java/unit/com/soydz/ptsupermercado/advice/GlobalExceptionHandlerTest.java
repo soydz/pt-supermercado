@@ -4,12 +4,14 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.soydz.ptsupermercado.controller.ProductController;
+import com.soydz.ptsupermercado.controller.SaleController;
 import com.soydz.ptsupermercado.controller.StoreController;
 import com.soydz.ptsupermercado.dto.ProductReqDTO;
 import com.soydz.ptsupermercado.dto.StoreReqDTO;
@@ -17,6 +19,7 @@ import com.soydz.ptsupermercado.service.exception.ProductNotFoundException;
 import com.soydz.ptsupermercado.service.exception.StoreDuplicateNameException;
 import com.soydz.ptsupermercado.service.exception.SupplierNotFoundException;
 import com.soydz.ptsupermercado.service.interfaces.IProductService;
+import com.soydz.ptsupermercado.service.interfaces.ISaleService;
 import com.soydz.ptsupermercado.service.interfaces.IStoreService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(ProductController.class)
-@Import({GlobalExceptionHandler.class, StoreController.class})
+@Import({GlobalExceptionHandler.class, StoreController.class, SaleController.class})
 class GlobalExceptionHandlerTest {
 
   @Autowired private MockMvc mockMvc;
@@ -35,6 +38,8 @@ class GlobalExceptionHandlerTest {
   @MockitoBean private IProductService productService;
 
   @MockitoBean private IStoreService storeService;
+
+  @MockitoBean private ISaleService saleService;
 
   @Test
   void shouldReturn400WhenMethodArgumentNotValidExceptionOccurs() throws Exception {
@@ -136,5 +141,17 @@ class GlobalExceptionHandlerTest {
     mockMvc
         .perform(post("/api/v1/sucursales").contentType(MediaType.APPLICATION_JSON).content(body))
         .andExpect(status().isConflict());
+  }
+
+  @Test
+  void shouldReturn400WhenDateTimeParseExceptionOccurs() throws Exception {
+    // Then
+    mockMvc
+        .perform(
+            get("/api/v1/ventas")
+                .param("sucursalId", "1")
+                .param("fecha", "12-01-2026")
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
   }
 }
