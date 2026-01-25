@@ -2,8 +2,7 @@ package com.soydz.ptsupermercado.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.soydz.ptsupermercado.dto.SaleReqDTO;
@@ -234,5 +233,16 @@ class SaleControllerTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
         .andExpect(jsonPath("$.length()").value(0));
+  }
+
+  @Test
+  void shouldReturn204WhenSaleIsDeleted() throws Exception {
+    // Given
+    Long saleId = 1L;
+
+    // Then
+    mockMvc.perform(delete("/api/v1/ventas/{id}", saleId)).andExpect(status().isNoContent());
+
+    verify(saleService).delete(saleId);
   }
 }

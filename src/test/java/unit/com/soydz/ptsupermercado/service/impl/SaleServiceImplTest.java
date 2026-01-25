@@ -17,6 +17,7 @@ import com.soydz.ptsupermercado.service.interfaces.IStoreService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -186,5 +187,36 @@ class SaleServiceImplTest {
     verify(storeService).findById(storeId);
     verify(saleRepository).findByStoreIdAndCreationDate(store, creationDate);
     verify(saleRepository).findByStoreIdAndCreationDate(store, creationDate);
+  }
+
+  @Test
+  void shouldMarkSaleAsDeletedWhenExists() {
+    // Given
+    Long saleId = 2L;
+    Sale sale = new Sale();
+    sale.setId(saleId);
+
+    // When
+    when(saleRepository.findById(saleId)).thenReturn(Optional.of(sale));
+
+    saleService.delete(saleId);
+
+    // Then
+    assertNotNull(sale.getDeletedAt());
+    verify(saleRepository).save(sale);
+  }
+
+  @Test
+  void shouldDoNothingWhenSaleDoesNotExist() {
+    // Given
+    Long saleId = 3L;
+
+    // When
+    when(saleRepository.findById(saleId)).thenReturn(Optional.empty());
+
+    saleService.delete(saleId);
+
+    // Then
+    verify(saleRepository, never()).save(any());
   }
 }

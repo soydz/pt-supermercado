@@ -59,4 +59,15 @@ public class SaleServiceImpl implements ISaleService {
         .map(SaleResDTO::fromEntity)
         .toList();
   }
+
+  @Override
+  public void delete(Long saleId) {
+    saleRepository
+        .findById(saleId)
+        .ifPresent(
+            sale -> {
+              sale.setDeletedAt();
+              saleRepository.save(sale);
+            });
+  }
 }
