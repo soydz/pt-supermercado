@@ -193,4 +193,14 @@ public class SaleController {
       @RequestParam(name = "fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
     return ResponseEntity.ok(saleService.findByStoreIdAndCreationDate(storeId, date));
   }
+
+  @Operation(summary = "Delete a sale", description = "Delete a sale by its ID")
+  @ApiResponse(responseCode = "204", description = "Sale successfully deleted")
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> delete(
+      @Parameter(description = "Sale ID", example = "13", required = true) @PathVariable("id")
+          Long saleId) {
+    saleService.delete(saleId);
+    return ResponseEntity.noContent().build();
+  }
 }

@@ -10,4 +10,6 @@ public interface ISaleService {
   SaleResDTO save(SaleReqDTO saleReqDTO);
 
   List<SaleResDTO> findByStoreIdAndCreationDate(Long storeId, LocalDate creationDate);
+
+  void delete(Long saleId);
 }
