@@ -146,4 +146,4 @@ La app está desplegada y accesible en la URL: http://pt-supermercado.soydz.com
 
 La API está documentada utilizando **OpenAPI + Scalar**.
 
-![Products API - Scalar](doc/images/scalar_product_3.png)
+![Products API - Scalar](doc/images/scalar_product_4.png)

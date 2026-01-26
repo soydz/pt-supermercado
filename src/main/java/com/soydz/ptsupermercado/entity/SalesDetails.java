@@ -74,4 +74,18 @@ public class SalesDetails {
   public int hashCode() {
     return Objects.hash(id, sale, product, quantity);
   }
+
+  @Override
+  public String toString() {
+    return "SalesDetails{"
+        + "id="
+        + id
+        + ", sale="
+        + sale
+        + ", product="
+        + product
+        + ", quantity="
+        + quantity
+        + '}';
+  }
 }
